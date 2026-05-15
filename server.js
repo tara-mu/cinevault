@@ -8,7 +8,7 @@ require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 const movieRoutes = require("./routes/movieRoutes");
 const watchlistRoutes = require("./routes/watchlistRoutes");
 
-if (process.argv.length != 3) {
+if (process.argv.length != 3  && !process.env.PORT) {
     process.stdout.write("Usage: node server.js <port>\n");
     process.exit(1);
 }
