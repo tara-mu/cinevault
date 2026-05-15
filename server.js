@@ -13,7 +13,7 @@ if (process.argv.length != 3) {
     process.exit(1);
 }
 
-const PORT = process.argv[2];
+const PORT = process.argv[2] || process.env.PORT || 3000;
 const app = express();
 
 app.set("view engine", "ejs");
