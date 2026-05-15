@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Movies - CineVault</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/movies/search">Search Movies</a>
+        <a href="/watchlist">My Watchlist</a>
+    </nav>
+
+    <div class="container">
+        <h1>🔍 Search Movies</h1>
+
+        <form action="/movies/search" method="POST" class="search-form">
+            <input
+                type="text"
+                name="query"
+                placeholder="Enter a movie title..."
+                value="<%= query %>"
+                required
+            />
+            <button type="submit" class="btn">Search</button>
+        </form>
+
+        <% if (error) { %>
+            <p class="error-msg"><%= error %></p>
+        <% } %>
+
+        <% if (results && results.length === 0) { %>
+            <p class="no-results">No results found for "<%= query %>". Try a different title.</p>
+        <% } %>
+
+        <% if (results && results.length > 0) { %>
+            <h2>Results for "<%= query %>"</h2>
+            <div class="results-grid">
+                <% results.forEach(function(movie) { %>
+                    <div class="movie-card">
+                        <% if (movie.primaryImage || movie.image) { %>
+                            <img
+                                src="<%= movie.primaryImage || movie.image %>"
+                                alt="<%= movie.primaryTitle || movie.title || 'Movie poster' %>"
+                                class="poster"
+                                onerror="this.style.display='none'"
+                            />
+                        <% } else { %>
+                            <div class="no-poster">No Image</div>
+                        <% } %>
+
+                        <div class="movie-info">
+                            <h3><%= movie.primaryTitle || movie.title || "Unknown Title" %></h3>
+                            <p><strong>Year:</strong> <%= movie.startYear || movie.year || "N/A" %></p>
+                            <p><strong>Rating:</strong> <%= movie.averageRating || movie.rating || "N/A" %></p>
+                            <p><strong>Genre:</strong> <%= (movie.genres && movie.genres.join(", ")) || movie.genre || "N/A" %></p>
+
+                            <form action="/watchlist/add" method="POST" class="add-form">
+                                <input type="hidden" name="imdbId" value="<%= movie.id || movie.imdbId || '' %>"/>
+                                <input type="hidden" name="title" value="<%= movie.primaryTitle || movie.title || 'Unknown' %>"/>
+                                <input type="hidden" name="year" value="<%= movie.startYear || movie.year || 'N/A' %>"/>
+                                <input type="hidden" name="rating" value="<%= movie.averageRating || movie.rating || 'N/A' %>"/>
+                                <input type="hidden" name="genres" value="<%= (movie.genres && movie.genres.join(', ')) || movie.genre || 'N/A' %>"/>
+                                <input type="hidden" name="posterUrl" value="<%= movie.primaryImage || movie.image || '' %>"/>
+                                <label for="note-<%= movie.id %>">Note (optional):</label>
+                                <input
+                                    type="text"
+                                    id="note-<%= movie.id %>"
+                                    name="userNote"
+                                    placeholder="Why you want to watch it..."
+                                />
+                                <button type="submit" class="btn btn-small">+ Add to Watchlist</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+    </div>
+
+    <footer>
+        <p>CineVault &mdash; Powered by IMDB236 API</p>
+    </footer>
+</body>
+</html>
